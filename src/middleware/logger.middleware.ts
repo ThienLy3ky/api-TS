@@ -1,3 +1,4 @@
+import { StatusCosde } from './constants';
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
@@ -7,14 +8,13 @@ export class LoggerMiddleware implements NestMiddleware {
 
   use(request: Request, response: Response, next: NextFunction): void {
     const { ip, method, originalUrl } = request;
-    const userAgent = request.get('user-agent') || '';
+    // const userAgent = request.get('user-agent') || '';
 
     response.on('finish', () => {
       const { statusCode } = response;
       const contentLength = response.get('content-length');
-
-      this.logger.log(`${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip}`);
-      this.logger.log(contentLength, 'Log Content');
+      this.logger.log(StatusCosde(statusCode));
+      this.logger.log(`method:${method} ${originalUrl} - Status:${statusCode} - contentLength:${contentLength} - ip:${ip}`);
     });
 
     next();
